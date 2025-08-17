@@ -1,0 +1,9 @@
+[package]
+name = "MuseTUI"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1.47.1",features = ["fs","full","tokio-macros"] }
+anyhow = "1.0.99"
+serde = { version = "1.0.219" }
