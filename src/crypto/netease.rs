@@ -59,4 +59,10 @@ mod test{
         println!("{:?}",result);
         assert_eq!(result.len(),16);
     }
+    #[test]
+    fn test_crypto_netease(){
+        let result = crate::crypto::netease::crypto_netease("hello world");
+        println!("{:#?}",result);
+        assert!(result.is_ok());
+    }
 }
