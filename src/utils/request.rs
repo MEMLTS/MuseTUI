@@ -33,14 +33,21 @@ impl RequestClient{
         header_map: Option<HeaderMap>,
         json: &serde_json::Value,
     ) -> Result<T,anyhow::Error> {
+        let body = serde_urlencoded::to_string(json)?;
         let res = self
             .client
             .post(url)
-            .json(json)
+            .body(body)
+            .header("Content-Type", "application/x-www-form-urlencoded")
             .headers(header_map.unwrap_or(HeaderMap::new()))
             .send()
             .await?;
         let text = res.text().await?;
+
+        if text.is_empty() {
+            return Err(anyhow::anyhow!("Response is empty"));
+        }
+
         Ok(serde_json::from_str(&text)?)
     }
 }

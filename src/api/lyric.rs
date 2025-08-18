@@ -6,14 +6,13 @@ pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
     let req = RequestClient::new();
     let url = "https://music.163.com/weapi/song/lyric";
     let json = json!({
-        "id": id,
+        "id": id.parse::<i32>()?,
         "lv": -1,
         "tv": -1,
         "csrf_token": ""
     });
 
     let encrypted_json = NeteaseCrypto::new(&json.to_string())?;
-    println!("{}", encrypted_json);
     let result = req.post::<serde_json::Value>(
         &url,
         None,
