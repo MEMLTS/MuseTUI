@@ -1,7 +1,7 @@
 use rsa::{BigUint, RsaPublicKey};
 
 /// PKCS#1 v1.5 encryption
-fn rsa_encrypt(data: &str, pub_exp_hex: &str, modulus_hex: &str) -> anyhow::Result<String> {
+pub fn rsa_encrypt(data: &str, pub_exp_hex: &str, modulus_hex: &str) -> anyhow::Result<String> {
     let n = BigUint::parse_bytes(modulus_hex.as_bytes(), 16).unwrap();
     let e = BigUint::parse_bytes(pub_exp_hex.as_bytes(), 16).unwrap();
 

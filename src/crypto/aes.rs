@@ -6,7 +6,7 @@ use cbc::Encryptor;
 
 type Aes128CbcEnc = Encryptor<Aes128>;
 
-fn aes_encrypt_cbc(text: String, key: &str, iv: &str) -> anyhow::Result<String> {
+pub fn aes_encrypt_cbc(text: &str, key: &str, iv: &str) -> anyhow::Result<String> {
     let key_bytes = key.as_bytes();
     let iv_bytes = iv.as_bytes();
 
@@ -17,7 +17,7 @@ fn aes_encrypt_cbc(text: String, key: &str, iv: &str) -> anyhow::Result<String> 
 
     let cipher = Aes128CbcEnc::new(key_array.as_ref(), iv_array.as_ref());
 
-    let text_bytes = text.into_bytes();
+    let text_bytes = text.as_bytes();
 
     let mut buffer = vec![0u8; text_bytes.len() + 16];
 
@@ -37,7 +37,7 @@ mod tests {
         let text = "hello world";
         let key = "xzxdnslcWZwQkoDx";
         let iv = "0102030405060708";
-        let result = aes_encrypt_cbc(text.to_string(), key, iv).unwrap();
+        let result = aes_encrypt_cbc(text, key, iv).unwrap();
         assert_eq!(result, "40dc795fbdaad35c1ff6d73892501a43");
     }
 }
