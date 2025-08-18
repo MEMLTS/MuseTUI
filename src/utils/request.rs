@@ -2,12 +2,12 @@ use reqwest::Client;
 use reqwest::header::HeaderMap;
 use serde::Deserialize;
 
-pub struct Request{
+pub struct RequestClient{
     client: Client
 }
 
-impl Request{
-    pub fn new()-> Request{
+impl RequestClient{
+    pub fn new()-> Self {
         Self {
             client: Client::new()
         }
@@ -50,7 +50,7 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn test_get() {
-        let request = Request::new();
+        let request = RequestClient::new();
         let res = request.get::<serde_json::Value>("https://jsonplaceholder.typicode.com/posts/1", None).await;
         println!("{:#?}", res.unwrap());
     }

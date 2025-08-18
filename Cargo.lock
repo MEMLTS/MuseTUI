@@ -8,6 +8,7 @@ version = "0.1.0"
 dependencies = [
  "aes",
  "anyhow",
+ "base64",
  "block-padding 0.3.3",
  "cbc",
  "hex",
