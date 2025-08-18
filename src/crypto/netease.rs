@@ -16,15 +16,12 @@ impl NeteaseCrypto{
 
 fn random_string(len: usize) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let mut rng = rand::rng();
-    let mut result = String::new();
 
-    for _ in 0..len {
-        let random_index = rng.random_range(0..chars.len());
-        let c = chars.chars().nth(random_index).unwrap();
-        result.push(c);
-    }
-    result
+    (0..len).map(
+        |_|{
+            chars.chars().nth(rand::thread_rng().gen_range(0..chars.len())).unwrap()
+        }
+    ).collect()
 }
 
 fn crypto_netease(text: String) -> NeteaseCrypto {

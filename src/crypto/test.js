@@ -49,7 +49,7 @@ function encrypt(data, pubExp, modulus, secKey) {
   };
 }
 
-export async function sign(data) {
+export function sign(data) {
   return encrypt(
     JSON.stringify(data),
     "010001",
@@ -58,4 +58,4 @@ export async function sign(data) {
   );
 }
 
-sign("2165763719").then(console.log);
+console.log(sign("2165763719"))
