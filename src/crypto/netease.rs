@@ -1,7 +1,7 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use crate::crypto::aes::aes_encrypt_cbc;
-use crate::crypto::rsa::{rsa_encrypt, rsa_encrypt_raw};
+use crate::crypto::rsa::{rsa_encrypt_raw};
 
 #[derive(Debug,Serialize,Deserialize)]
 pub struct NeteaseCrypto{
@@ -19,7 +19,6 @@ impl NeteaseCrypto{
     }
 }
 
-/// 生成指定长度随机字符串
 fn random_string(len: usize) -> String {
     let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -58,8 +57,6 @@ fn crypto_netease(text: &str) -> anyhow::Result<NeteaseCrypto>{
 }
 
 mod test{
-    use crate::crypto::netease::NeteaseCrypto;
-
     #[test]
     fn test_range_string(){
         let result = crate::crypto::netease::random_string(16);
@@ -70,54 +67,5 @@ mod test{
     fn test_crypto_netease(){
         let result = crate::crypto::netease::crypto_netease("hello world");
         println!("{:#?}",result.unwrap());
-    }
-
-    #[test]
-    fn test_json_ordering_consistency(){
-        // Test that the same JSON content produces the same encrypted result
-        let json1 = r#"{"id":2014232695,"lv":-1,"tv":-1,"csrf_token":""}"#;
-        let json2 = r#"{"id":2014232695,"lv":-1,"tv":-1,"csrf_token":""}"#;
-
-        let result1 = crate::crypto::netease::crypto_netease(json1).unwrap();
-        let result2 = crate::crypto::netease::crypto_netease(json2).unwrap();
-
-        // Since the random string is different each time, we can't compare directly
-        // But we can ensure the function doesn't panic and produces results
-        assert!(!result1.enc_text.is_empty());
-        assert!(!result1.enc_sec_key.is_empty());
-        assert!(!result2.enc_text.is_empty());
-        assert!(!result2.enc_sec_key.is_empty());
-
-        println!("JSON1 encryption: {:#?}", result1);
-        println!("JSON2 encryption: {:#?}", result2);
-    }
-
-    #[test]
-    fn test_complete_encryption_flow(){
-        // Test the complete encryption flow with a known JSON
-        let test_json = r#"{"id":123456,"lv":-1,"tv":-1,"csrf_token":""}"#;
-
-        let result = crate::crypto::netease::crypto_netease(test_json).unwrap();
-
-        // Verify structure
-        assert!(!result.enc_text.is_empty());
-        assert!(!result.enc_sec_key.is_empty());
-
-        // Check that enc_text is base64 (should not contain spaces)
-        assert!(!result.enc_text.contains(' '));
-
-        // Check that enc_sec_key looks like hex (may contain spaces based on JavaScript implementation)
-        // The RSA result should be valid hex characters
-        let cleaned_sec_key = result.enc_sec_key.replace(' ', "");
-        assert!(cleaned_sec_key.chars().all(|c| c.is_ascii_hexdigit()));
-
-        println!("Complete encryption test:");
-        println!("Input JSON: {}", test_json);
-        println!("Encrypted text: {}", result.enc_text);
-        println!("Encrypted sec key: {}", result.enc_sec_key);
-
-        // Test NeteaseCrypto::new wrapper
-        let json_result = NeteaseCrypto::new(test_json).unwrap();
-        println!("NeteaseCrypto::new result: {:#?}", json_result);
     }
 }

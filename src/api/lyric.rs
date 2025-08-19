@@ -1,5 +1,4 @@
 use crate::utils::request::RequestClient;
-use serde_json::json;
 use crate::crypto::netease::NeteaseCrypto;
 
 pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
