@@ -43,10 +43,10 @@ impl RequestClient{
             .send()
             .await?;
         let text = res.text().await?;
-
         if text.is_empty() {
             return Err(anyhow::anyhow!("Response is empty"));
         }
+        println!("{}", text);
 
         Ok(serde_json::from_str(&text)?)
     }
