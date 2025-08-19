@@ -13,6 +13,9 @@ pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
     });
 
     let encrypted_json = NeteaseCrypto::new(&json.to_string())?;
+
+    println!("encrypted_json {:#?}", encrypted_json);
+
     let result = req.post::<serde_json::Value>(
         &url,
         None,

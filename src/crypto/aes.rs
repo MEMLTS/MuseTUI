@@ -3,6 +3,7 @@ use aes::Aes128;
 use aes::cipher::block_padding::Pkcs7;
 use anyhow::anyhow;
 use cbc::Encryptor;
+use base64::{engine::general_purpose::STANDARD, Engine};
 
 type Aes128CbcEnc = Encryptor<Aes128>;
 
@@ -26,7 +27,7 @@ pub fn aes_encrypt_cbc(text: &str, key: &str, iv: &str) -> anyhow::Result<String
         &mut buffer
     ).map_err(|e| anyhow::anyhow!("Encryption failed: {:?}", e))?;
 
-    Ok(hex::encode(encrypted_data))
+    Ok(STANDARD.encode(encrypted_data))
 }
 
 #[cfg(test)]
