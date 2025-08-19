@@ -5,17 +5,12 @@ use crate::crypto::netease::NeteaseCrypto;
 pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
     let req = RequestClient::new();
     let url = "https://music.163.com/weapi/song/lyric";
-    let json = json!({
-        "id": id.parse::<i32>()?,
-        "lv": -1,
-        "tv": -1,
-        "csrf_token": ""
-    });
+    let json_string = format!(
+        r#"{{"id":{},"lv":-1,"tv":-1,"csrf_token":""}}"#,
+        id.parse::<i32>()?
+    );
 
-    let encrypted_json = NeteaseCrypto::new(&json.to_string())?;
-
-    println!("encrypted_json {:#?}", encrypted_json);
-
+    let encrypted_json = NeteaseCrypto::new(&json_string)?;
     let result = req.post::<serde_json::Value>(
         &url,
         None,
@@ -31,7 +26,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_lyric() {
-        let res = get_lyric("158135465").await;
+        let res = get_lyric("2014232695").await;
         match res {
             Ok(data) => println!("{:#?}", data),
             Err(err) => eprintln!("Error: {:#?}", err),
