@@ -1,0 +1,57 @@
+name: Build Package
+
+on:
+  workflow_call:
+
+env:
+  APP_NAME: MuseTUI
+
+jobs:
+  build:
+    runs-on: ${{ matrix.platform.runner }}
+    strategy:
+      matrix:
+        platform:
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            label: windows-x86_64
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            label: linux-x86_64
+          - runner: macos-latest
+            target: x86_64-apple-darwin
+            label: macos-x86_64
+          - runner: macos-latest
+            target: aarch64-apple-darwin
+            label: macos-aarch64
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+
+      - name: 设置 Rust 工具链
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 设置 Rust 缓存
+        uses: swatinem/rust-cache@v2
+        with:
+          prefix-key: ${{ env.APP_NAME}}
+
+      - name: 添加目标平台
+        run: rustup target add ${{ matrix.platform.target }}
+
+      - name: 构建项目
+        if: success()
+        run: cargo build --release --target ${{ matrix.platform.target }}
+
+      - name: 上传构建文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.APP_NAME }}-${{ matrix.platform.label }}"
+          path: |
+            target/${{ matrix.platform.target }}/release/${{ env.APP_NAME }}*
+            !target/${{ matrix.platform.target }}/release/${{ env.APP_NAME }}.d
+            !target/${{ matrix.platform.target }}/release/${{ env.APP_NAME }}.pdb
