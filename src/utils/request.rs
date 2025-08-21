@@ -12,6 +12,11 @@ impl RequestClient{
             client: Client::new()
         }
     }
+
+    pub fn client(&self)-> &Client {
+        &self.client
+    }
+
     pub async fn get<T: for<'de> Deserialize<'de>>(
         &self,
         url: &str,

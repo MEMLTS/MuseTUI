@@ -7,10 +7,7 @@ pub async fn get_detail(id: &str) -> anyhow::Result<serde_json::Value> {
    let url = "https://music.163.com/weapi/v3/song/detail?csrf_token=";
    let req = RequestClient::new();
 
-   let json_string = format!(
-      r#"{{"c":[{}],"ids":[{}], "csrf_token":""}}"#,
-      id, id
-   );
+   let json_string = format!(r#"{{"c":[{}],"ids":[{}], "csrf_token":""}}"#,id, id);
 
    let encrypted_json = NeteaseCrypto::new(&json_string)?;
    let result = req.post::<serde_json::Value>(
