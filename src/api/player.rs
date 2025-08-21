@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use reqwest::header::{HeaderMap, HeaderValue};
 use anyhow::Result;
+use crate::config::AppConfig;
 use crate::utils::request::RequestClient;
 
 pub async fn get_player(id: &str, level: Option<&str>) -> Result<serde_json::Value> {
@@ -29,10 +30,10 @@ pub async fn get_player(id: &str, level: Option<&str>) -> Result<serde_json::Val
     insert_hdr!(headers, "Sec-Fetch-Dest", "empty");
     insert_hdr!(headers, "Accept-Language", "en-US,en;q=0.9");
 
-    if let Ok(cookie) = std::env::var("NETEASE_COOKIE") {
-        if !cookie.is_empty() {
-            headers.insert("Cookie", HeaderValue::from_str(&cookie)?);
-        }
+    let cookie = AppConfig::get().server().cookie();
+
+    if !cookie.is_empty() {
+        headers.insert("Cookie", HeaderValue::from_str(&cookie)?);
     }
 
     let req = RequestClient::new();

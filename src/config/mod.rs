@@ -32,7 +32,7 @@ impl AppConfig{
     pub fn get() -> &'static AppConfig{
         &CONFIG
     }
-    pub fn server() -> &'static ServerConfig{
-        &CONFIG.server
+    pub fn server(&self) -> &ServerConfig{
+        &self.server
     }
 }

@@ -19,3 +19,15 @@ tokio = { version = "1.47.1" ,features = ["full"]}
 base64 = "0.22.1"
 serde_urlencoded = "0.7.1"
 config = { version = "0.15.14",features = ["yaml"] }
+
+[profile.release]
+# 启用 LTO ，大幅减小体积并提升性能
+lto = "fat"
+# 最小体积
+opt-level = "z"
+# strip 调试符号
+strip = "symbols"
+# 移除 panic 字符串（减小错误信息体积）
+# panic = "abort"
+# 不生成调试信息
+# debug = false
