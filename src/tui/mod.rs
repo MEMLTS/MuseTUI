@@ -1,3 +1,3 @@
-mod app;
+pub mod app;
 mod event;
 mod components;
