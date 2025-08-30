@@ -1,7 +1,26 @@
+use serde::Deserialize;
 use crate::utils::request::RequestClient;
 use crate::crypto::netease::NeteaseCrypto;
 
-pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
+#[derive(Debug,Deserialize)]
+#[allow(dead_code)]
+pub struct Lrc{
+    pub version: i32,
+    pub lyric: String
+}
+
+#[derive(Debug,Deserialize)]
+#[allow(dead_code)]
+pub struct NeteaseLyric{
+    pub code: i32,
+    pub lrc: Lrc,
+    pub qfy: bool,
+    pub sfy: bool,
+    pub sgc: bool,
+    pub tlyric: Lrc,
+}
+
+pub async fn get_lyric(id: &str) -> anyhow::Result<NeteaseLyric> {
     let req = RequestClient::new();
     let url = "https://music.163.com/weapi/song/lyric";
     let json_string = format!(
@@ -15,8 +34,9 @@ pub async fn get_lyric(id: &str) -> anyhow::Result<serde_json::Value> {
         None,
         &encrypted_json
     ).await?;
+    let lyric_data: NeteaseLyric = serde_json::from_value(result)?;
 
-    Ok(result)
+    Ok(lyric_data)
 }
 
 #[cfg(test)]
